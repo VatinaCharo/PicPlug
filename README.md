@@ -39,13 +39,16 @@ imageStorage: './data/image/PicPlug/'
 ## 项目结构
 
 ```text
-Main::vcg.Plugin
+Main Class : vcg.Plugin
+
 main/
 ├── java/
 │   └── vcg/
 │       ├── Commands/
+│       │   ├── Command.java
 │       │   ├── CommandsManager.java
 │       │   ├── GetRandImage.java
+│       │   ├── Help.java
 │       │   ├── Ping.java
 │       │   ├── PureCommand.java
 │       │   └── SimpleCommand.java
