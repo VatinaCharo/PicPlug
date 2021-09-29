@@ -1,0 +1,45 @@
+package vcg.Commands;
+
+
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.QuoteReply;
+import vcg.Config.Config;
+import vcg.Utils.ImgDownloader;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+
+public class GetRandImage extends PureCommand {
+
+    public GetRandImage(String name) {
+        super(name);
+    }
+
+    @Override
+    public void onCommand(MessageChain source, GroupMessageEvent event) {
+        CompletableFuture<String> getImage = CompletableFuture.supplyAsync(() -> {
+            try {
+                return ImgDownloader.download(Config.INSTANCE.getImageAPI(), Config.INSTANCE.getImageStorage());
+            } catch (IOException e) {
+                return "err";
+            }
+        });
+        MessageChainBuilder mcb = new MessageChainBuilder()
+                .append(new QuoteReply(source))
+                .append(new At(event.getSender().getId()));
+        getImage.thenAccept((result) -> {
+            if (result.equalsIgnoreCase("err")) {
+                event.getGroup().sendMessage(mcb.append("图片获取失败 >_<").build());
+            } else {
+                mcb.append(Contact.uploadImage(event.getGroup(), new File(Config.INSTANCE.getImageStorage() + result)));
+                event.getGroup().sendMessage(mcb.build());
+            }
+        });
+    }
+
+}
