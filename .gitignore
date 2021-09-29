@@ -119,3 +119,9 @@ run/
 
 # Local Test Launch point
 src/test/kotlin/RunTerminal.kt
+
+#Mirai test env data
+bots
+config
+data
+plugins
