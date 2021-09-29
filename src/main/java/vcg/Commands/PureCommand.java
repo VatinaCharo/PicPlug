@@ -1,18 +1,15 @@
 package vcg.Commands;
 
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.message.data.MessageChain;
 
-public abstract class PureCommand {
+public abstract class PureCommand implements Command{
         private final String name;
 
         public PureCommand(String name) {
             this.name = name;
         }
 
+        @Override
         public String getName() {
             return name;
         }
-
-        public abstract void onCommand(MessageChain source, GroupMessageEvent event);
 }

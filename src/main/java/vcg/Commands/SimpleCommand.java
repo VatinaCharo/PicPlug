@@ -1,8 +1,5 @@
 package vcg.Commands;
 
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.message.data.MessageChain;
-
 /**
  * Java示例
  * ```java
@@ -17,9 +14,9 @@ import net.mamoe.mirai.message.data.MessageChain;
  *     }
  *
  *     @Override
- *     public void onCommand(MessageChain source, GroupMessageEvent event) {
+ *     public void onCommand(GroupMessageEvent event) {
  *         return new MessageChainBuilder()
- *                 .append(new QuoteReply(source))
+ *                 .append(new QuoteReply(event.getSource()))
  *                 .append(new At(event.getSender().getId()))
  *                 .append("Echo:\n")
  *                 .append("\"")
@@ -30,7 +27,7 @@ import net.mamoe.mirai.message.data.MessageChain;
  * }
  * ```
  */
-public abstract class SimpleCommand {
+public abstract class SimpleCommand implements Command{
     private final String name;
     private String context;
 
@@ -38,6 +35,7 @@ public abstract class SimpleCommand {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -49,7 +47,4 @@ public abstract class SimpleCommand {
     public void setContext(String context) {
         this.context = context;
     }
-
-    public abstract void onCommand(MessageChain source, GroupMessageEvent event);
-
 }

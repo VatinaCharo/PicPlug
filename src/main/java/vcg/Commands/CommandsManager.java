@@ -10,6 +10,7 @@ public class CommandsManager {
     private final MiraiLogger logger;
     private static final ArrayList<SimpleCommand> SIMPLE_COMMAND_LIST = new ArrayList<>();
     private static final ArrayList<PureCommand> PURE_COMMAND_LIST = new ArrayList<>();
+    public static final ArrayList<Command> COMMAND_LIST = new ArrayList<>();
     private final String COMMAND_PREFIX;
 
     public CommandsManager(MiraiLogger logger, String command_prefix) {
@@ -19,11 +20,13 @@ public class CommandsManager {
 
     public void registerCommand(SimpleCommand sc) {
         SIMPLE_COMMAND_LIST.add(sc);
+        COMMAND_LIST.add(sc);
         logger.info("注册简单指令：" + sc.getName());
         logger.info("register simple command：" + sc.getName());
     }
     public void registerCommand(PureCommand pc) {
         PURE_COMMAND_LIST.add(pc);
+        COMMAND_LIST.add(pc);
         logger.info("注册纯指令：" + pc.getName());
         logger.info("register pure command：" + pc.getName());
     }
@@ -36,7 +39,7 @@ public class CommandsManager {
             //分派解析后的指令到对应的command处理
             for (PureCommand pc : PURE_COMMAND_LIST) {
                 if (name.equals(pc.getName())) {
-                    pc.onCommand(source, event);
+                    pc.onCommand(event);
                 }
             }
         }
@@ -47,7 +50,7 @@ public class CommandsManager {
             for (SimpleCommand sc : SIMPLE_COMMAND_LIST) {
                 if (name.equals(sc.getName())) {
                     sc.setContext(text);
-                    sc.onCommand(source, event);
+                    sc.onCommand(event);
                 }
             }
         }

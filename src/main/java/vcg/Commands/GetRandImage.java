@@ -14,14 +14,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
-public class GetRandImage extends PureCommand {
+public class GetRandImage extends PureCommand{
 
     public GetRandImage(String name) {
         super(name);
     }
 
+
     @Override
-    public void onCommand(MessageChain source, GroupMessageEvent event) {
+    public String info() {
+        return super.info()+" -> 机器人会@你并发一张图到群里";
+    }
+
+    @Override
+    public void onCommand(GroupMessageEvent event) {
         CompletableFuture<String> getImage = CompletableFuture.supplyAsync(() -> {
             try {
                 return ImgDownloader.download(Config.INSTANCE.getImageAPI(), Config.INSTANCE.getImageStorage());
@@ -30,7 +36,7 @@ public class GetRandImage extends PureCommand {
             }
         });
         MessageChainBuilder mcb = new MessageChainBuilder()
-                .append(new QuoteReply(source))
+                .append(new QuoteReply(event.getSource()))
                 .append(new At(event.getSender().getId()));
         getImage.thenAccept((result) -> {
             if (result.equalsIgnoreCase("err")) {

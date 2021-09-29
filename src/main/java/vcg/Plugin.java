@@ -5,6 +5,7 @@ import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import vcg.Commands.GetRandImage;
+import vcg.Commands.Help;
 import vcg.Commands.Ping;
 import vcg.Commands.CommandsManager;
 import vcg.Config.Config;
@@ -45,8 +46,9 @@ public final class Plugin extends JavaPlugin {
         getLogger().info("Plugin: "+Resources.NAME+" registering commands...");
 
         // 注册自建指令
-        commandsManager.registerCommand(new GetRandImage("gkd"));
+        commandsManager.registerCommand(new Help());
         commandsManager.registerCommand(new Ping("ping"));
+        commandsManager.registerCommand(new GetRandImage("gkd"));
         // 注册Console命令
         // TODO: 2021/9/28
         // 注入自建的指令处理系统

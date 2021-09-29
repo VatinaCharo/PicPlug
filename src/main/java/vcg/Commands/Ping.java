@@ -12,9 +12,14 @@ public class Ping extends PureCommand {
     }
 
     @Override
-    public void onCommand(MessageChain source, GroupMessageEvent event) {
+    public String info() {
+        return super.info()+" -> 机器人会@你并回复'pong'";
+    }
+
+    @Override
+    public void onCommand(GroupMessageEvent event) {
         MessageChain msg = new MessageChainBuilder()
-                .append(new QuoteReply(source))
+                .append(new QuoteReply(event.getSource()))
                 .append(new At(event.getSender().getId()))
                 .append("pong")
                 .build();
