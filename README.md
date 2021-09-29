@@ -37,6 +37,7 @@ imageStorage: './data/image/PicPlug/'
 * `!!gkd` 机器人会从指定的图片api处获取一张图片，然后发到群里并@你
 
 `!!help`指令演示:
+
 ![help command demo](https://github.com/VatinaCharo/PicgoPicAssets/blob/09c4ad04de8bb732af59b66e5130ca1d83a194ff/pic/picplug_help_command.png)
 
 ## 项目结构
