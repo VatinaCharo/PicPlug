@@ -1,7 +1,0 @@
-grantedPermissionMap: 
-  '*:*': 
-    - console
-  'console:command.status': 
-    - u3067710367
-  'vcg.picplug:command.echo': 
-    - u3067710367
