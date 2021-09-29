@@ -1,7 +1,0 @@
-imageAPI: 'https://imgapi.cn/cos.php?return=img'
-groupList: 
-  - 1234567890
-  - 9876543210
-  - 835809281
-commandPrefix: '!!'
-imageStorage: './data/image/PicPlug/'
