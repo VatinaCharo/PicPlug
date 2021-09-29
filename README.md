@@ -32,6 +32,7 @@ imageStorage: './data/image/PicPlug/'
 ```
 **当前支持的功能**
 
+* `!!help` 机器人会回复帮助信息并@你
 * `!!ping` 机器人会回复`pong`并@你
 * `!!gkd` 机器人会从指定的图片api处获取一张图片，然后发到群里并@你
 
