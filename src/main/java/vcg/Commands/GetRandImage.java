@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
-public class GetRandImage extends PureCommand{
+public class GetRandImage extends PureCommand {
 
     public GetRandImage(String name) {
         super(name);
@@ -23,7 +23,7 @@ public class GetRandImage extends PureCommand{
 
     @Override
     public String info() {
-        return super.info()+" -> 机器人会@你并发一张图到群里";
+        return super.info() + " -> 机器人会@你并发一张图到群里";
     }
 
     @Override

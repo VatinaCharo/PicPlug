@@ -5,6 +5,7 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
+import vcg.Config.Config;
 
 public class Ping extends PureCommand {
     public Ping(String name) {
@@ -13,7 +14,7 @@ public class Ping extends PureCommand {
 
     @Override
     public String info() {
-        return super.info()+" -> 机器人会@你并回复'pong'";
+        return super.info() + " -> 机器人会@你并回复'pong'";
     }
 
     @Override
