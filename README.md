@@ -29,6 +29,9 @@ groupList:
 commandPrefix: '!!'
 # 插件下载的图片储存位置
 imageStorage: './data/image/PicPlug/'
+# 指令配置开关，用于控制是否启用该指令
+ping: true
+getRandImage: true
 ```
 **当前支持的功能**
 
