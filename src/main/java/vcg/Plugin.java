@@ -47,10 +47,10 @@ public final class Plugin extends JavaPlugin {
 
         // 注册自建指令
         commandsManager.registerCommand(new Help());
-        commandsManager.registerCommand(new Ping("ping"));
-        commandsManager.registerCommand(new GetRandImage("gkd"));
+        commandsManager.registerCommand(new Ping("ping"),Config.INSTANCE.getPing());
+        commandsManager.registerCommand(new GetRandImage("gkd"),Config.INSTANCE.getGetRandImage());
         // 注册Console命令
-        // TODO: 2021/9/28
+
         // 注入自建的指令处理系统
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class,event -> {
             for (Long obj: Config.INSTANCE.getGroupList()) {
