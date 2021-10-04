@@ -1,7 +1,6 @@
 package vcg.Commands;
 
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.message.data.MessageChain;
 import vcg.Config.Config;
 
 public interface Command {
