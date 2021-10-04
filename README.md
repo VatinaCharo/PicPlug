@@ -45,7 +45,7 @@ getRandImageCD: 0
 
 `!!help`指令演示:
 
-![help command demo](https://github.com/VatinaCharo/PicgoPicAssets/blob/09c4ad04de8bb732af59b66e5130ca1d83a194ff/pic/picplug_help_command.png)
+![help command demo](https://raw.githubusercontent.com/VatinaCharo/PicgoPicAssets/09c4ad04de8bb732af59b66e5130ca1d83a194ff/pic/picplug_help_command.png)
 
 ## 项目结构
 
