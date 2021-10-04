@@ -34,6 +34,8 @@ imageStorage: './data/image/PicPlug/'
 # 指令配置开关，用于控制是否启用该指令
 ping: true
 getRandImage: true
+# 获取图片的cd时间，单位ms
+getRandImageCD: 0
 ```
 **当前支持的功能**
 
