@@ -12,7 +12,7 @@
 
 ==注意== : [mirai-compose](https://github.com/sonder-joker/mirai-compose)因为mirai版本可能过旧，无法使用此插件，推荐使用[mcl](https://github.com/iTXTech/mirai-console-loader)
 
-**使用说明**
+**说明**
 
 出于避免打扰群友的考虑，插件默认不对任何群启用功能(~~除非你的群正好命中了配置文件里默认生成的示例群号~~), 启用插件需向`groupList`配置属性下添加对应的群号
 
