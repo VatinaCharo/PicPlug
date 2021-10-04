@@ -12,4 +12,6 @@ object Config :AutoSavePluginConfig("${Resources.NAME}Config"){
     // Command Switch Config
     var ping : Boolean by value(true)
     var getRandImage : Boolean by value(true)
+    // Customized Setting for Command
+    var getRandImageCD: Int by value(0)
 }
