@@ -27,7 +27,7 @@ groupList:
 # 插件的指令前缀，仅此前缀开头的聊天信息会被识别为命令
 # 示例：
 #     Alice： !!ping
-#      Bot:  @Alice !!pong
+#      Bot:  @Alice pong
 commandPrefix: '!!'
 # 插件下载的图片储存位置
 imageStorage: './data/image/PicPlug/'
