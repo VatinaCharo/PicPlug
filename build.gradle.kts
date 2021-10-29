@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "vcg"
-version = "1.1.1"
+version = "1.1.2-BETA"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
