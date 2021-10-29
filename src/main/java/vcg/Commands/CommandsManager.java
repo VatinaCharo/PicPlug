@@ -69,7 +69,7 @@ public class CommandsManager {
     public void handle(GroupMessageEvent event) {
         String[] rawText = event.getMessage().contentToString().split(" ");
         if (rawText.length == 1 && rawText[0].startsWith(COMMAND_PREFIX)) {
-            String name = rawText[0].substring(2);
+            String name = rawText[0].substring(COMMAND_PREFIX.length());
             //分派解析后的指令到对应的command处理
             for (PureCommand pc : PURE_COMMAND_LIST) {
                 if (name.equals(pc.getName())) {
@@ -78,7 +78,7 @@ public class CommandsManager {
             }
         }
         if (rawText.length == 2 && rawText[0].startsWith(COMMAND_PREFIX)) {
-            String name = rawText[0].substring(2);
+            String name = rawText[0].substring(COMMAND_PREFIX.length());
             String text = rawText[1];
             //分派解析后的指令到对应的command处理
             for (SimpleCommand sc : SIMPLE_COMMAND_LIST) {
