@@ -11,6 +11,8 @@ import vcg.Utils.ImgDownloader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 public class GetRandImage extends PureCommand {
@@ -33,7 +35,9 @@ public class GetRandImage extends PureCommand {
             time = newTime;
             CompletableFuture<String> getImage = CompletableFuture.supplyAsync(() -> {
                 try {
-                    return ImgDownloader.download(Config.INSTANCE.getImageAPI(), Config.INSTANCE.getImageStorage());
+                    List<String> urls  = Config.INSTANCE.getImageAPIList();
+                    Random random = new Random();
+                    return ImgDownloader.download(urls.get(random.nextInt(urls.size())), Config.INSTANCE.getImageStorage());
                 } catch (IOException e) {
                     return "err";
                 }

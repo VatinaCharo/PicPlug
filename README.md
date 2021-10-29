@@ -19,7 +19,8 @@
 **配置文件结构**
 ```yaml
 # 默认的图片API，可依据需求自行更改，但务必保证返回的结果是一张图片，最好是jpg，其他不做可用性保证
-imageAPI: 'https://imgapi.cn/cos.php?return=img'
+imageAPIList: 
+  - 'https://imgapi.cn/cos.php?return=img'
 # 插件生效的群列表
 groupList: 
   - 1234567890
