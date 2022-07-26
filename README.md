@@ -62,8 +62,10 @@ whiteQQList:
   - 123123123
   - 3067710367
 adminQQ: 123123123
-  触发发图指令
+# 触发发图指令
 commands:
   - !!gkd
 retryCount: 5
+# 发图冷却时间
+cd: 1000
 ```
