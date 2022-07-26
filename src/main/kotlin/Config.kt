@@ -12,4 +12,7 @@ object Config : AutoSavePluginConfig("config") {
 
     // 当网络连接出现故障时，重试的次数
     val retryCount: Int by value(R.DEFAULT_RETRY_COUNT)
+
+    // 冷却时间ms
+    val cd: Int by value(R.DEFAULT_CD)
 }

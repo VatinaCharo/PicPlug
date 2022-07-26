@@ -4,6 +4,7 @@ object R {
     const val DEFAULT_COMMAND = "!!gkd"
     const val IMG_API_URL = "https://imgapi.cn/cos.php?return=img"
     const val DEFAULT_RETRY_COUNT = 5
+    const val DEFAULT_CD = 10_000
 
     //    const val HELP_CN = "图片小助手功能"
     const val HELP = "help"

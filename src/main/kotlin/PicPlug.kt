@@ -26,6 +26,7 @@ object PicPlug : KotlinPlugin(
     }
 ) {
     private val scope = CoroutineScope(this.coroutineContext)
+    private var timeFlag = System.currentTimeMillis()
 
     override fun onEnable() {
         // 创建图片存储区
@@ -52,31 +53,43 @@ object PicPlug : KotlinPlugin(
                 // 检测是否为触发指令
                 Config.commands.forEach {
                     if (message.content.startsWith(it)) {
-                        // 启动一个下载图片，转发图片的协程
-                        scope.launch {
-                            val mcb = MessageChainBuilder()
-                                .append(QuoteReply(source))
-                                .append(At(sender))
-                            var timeCost = System.currentTimeMillis()
-                            // 获取图片
-                            val fileName = downloadImg(
-                                URL(Config.imageAPIs.shuffled().first()),
-                                imageFolder.absolutePath,
-                                Config.retryCount
-                            )
-                            timeCost = System.currentTimeMillis() - timeCost
-                            // 检查是否正确获取了图片，并发送对应的消息
-                            when (fileName) {
-                                "err" -> {
-                                    logger.error("未能正确下载图片，尝试次数${Config.retryCount}，Time: $timeCost ms")
-                                    group.sendMessage(mcb.append("图片获取失败 >_<").asMessageChain())
-                                }
-                                else -> {
-                                    logger.info("获取到图片 $fileName，Time: $timeCost ms")
-                                    val img = imageFolder.resolve(fileName).uploadAsImage(group, "jpg")
-                                    group.sendMessage(mcb.append(img).asMessageChain())
+                        val mcb = MessageChainBuilder()
+                            .append(QuoteReply(source))
+                            .append(At(sender))
+                        val newTime = System.currentTimeMillis()
+                        val timeInt = newTime - timeFlag
+                        // 更新执行指令的时间
+                        timeFlag = newTime
+                        if (timeInt > Config.cd) {
+                            // 启动一个下载图片，转发图片的协程
+                            scope.launch {
+                                var timeCost = System.currentTimeMillis()
+                                // 获取图片
+                                val fileName = downloadImg(
+                                    URL(Config.imageAPIs.shuffled().first()),
+                                    imageFolder.absolutePath,
+                                    Config.retryCount
+                                )
+                                timeCost = System.currentTimeMillis() - timeCost
+                                // 检查是否正确获取了图片，并发送对应的消息
+                                when (fileName) {
+                                    "err" -> {
+                                        logger.error("未能正确下载图片，尝试次数${Config.retryCount}，Time: $timeCost ms")
+                                        group.sendMessage(mcb.append("图片获取失败 >_<").asMessageChain())
+                                    }
+                                    else -> {
+                                        logger.info("获取到图片 $fileName，Time: $timeCost ms")
+                                        val img = imageFolder.resolve(fileName).uploadAsImage(group, "jpg")
+                                        group.sendMessage(mcb.append(img).asMessageChain())
+                                    }
                                 }
                             }
+                        } else {
+                            group.sendMessage(
+                                mcb.append("\n${Config.commands.first()}太频繁了，年轻人要节制哦，请冷静一会儿吧\n")
+                                    .append("Left: ${Config.cd - timeInt} ms")
+                                    .asMessageChain()
+                            )
                         }
                     }
                 }
