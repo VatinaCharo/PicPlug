@@ -14,7 +14,6 @@ import net.mamoe.mirai.message.data.QuoteReply
 import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import java.net.URL
-import kotlin.time.ExperimentalTime
 
 object PicPlug : KotlinPlugin(
     JvmPluginDescription(
@@ -28,7 +27,6 @@ object PicPlug : KotlinPlugin(
 ) {
     private val scope = CoroutineScope(this.coroutineContext)
 
-    @OptIn(ExperimentalTime::class)
     override fun onEnable() {
         // 创建图片存储区
         val imageFolder = dataFolder.resolve("img")
