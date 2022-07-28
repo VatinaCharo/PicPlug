@@ -1,11 +1,21 @@
 # PicPlug
 
-<p align="center">  
+<p>
+<a href="https://github.com/VatinaCharo/PicPlug">
 <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/VatinaCharo/PicPlug?style=plastic">
+</a>
+<a href="https://github.com/VatinaCharo/PicPlug">
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/VatinaCharo/PicPlug">
+</a>
+<a href="https://github.com/VatinaCharo/PicPlug/releases/latest">
 <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/VatinaCharo/PicPlug">
+</a>
+<a href="https://github.com/VatinaCharo/PicPlug/releases">
 <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/VatinaCharo/PicPlug/total">
+</a>
+<a href="https://github.com/VatinaCharo/PicPlug">
 <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/VatinaCharo/PicPlug?style=social">
+</a>
 </p>
 
 **目前已使用kotlin进行了重构，老版本请前往[java分支](https://github.com/VatinaCharo/PicPlug/tree/java)获取**
