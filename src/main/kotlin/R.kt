@@ -6,28 +6,13 @@ object R {
     const val DEFAULT_RETRY_COUNT = 5
     const val DEFAULT_CD = 10_000
 
-    //    const val HELP_CN = "图片小助手功能"
     const val HELP = "help"
-
-    //    const val CHECK_CN = "检查"
     const val CHECK = "check"
-
-    //    const val ADD_GROUP_CN = "群+"
     const val ADD_GROUP = "g+"
-
-    //    const val REMOVE_GROUP_CN = "群-"
     const val REMOVE_GROUP = "g-"
-
-    //    const val ADD_MEMBER_CN = "群员+"
     const val ADD_MEMBER = "m+"
-
-    //    const val REMOVE_MEMBER_CN = "群员-"
     const val REMOVE_MEMBER = "m-"
-
-    //    const val ADD_API_CN = "链接+"
     const val ADD_API = "l+"
-
-    //    const val REMOVE_API_CN = "链接-"
     const val REMOVE_API = "l-"
 
     val HELP_INFO =

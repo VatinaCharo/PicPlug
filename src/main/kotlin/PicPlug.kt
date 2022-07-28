@@ -19,7 +19,7 @@ object PicPlug : KotlinPlugin(
     JvmPluginDescription(
         id = "nju.eur3ka.picplug",
         name = "PicPlug",
-        version = "1.2.0",
+        version = "1.2.1",
     ) {
         author("Eur3ka")
         info("""发图小助手""")
@@ -27,7 +27,6 @@ object PicPlug : KotlinPlugin(
 ) {
     private val scope = CoroutineScope(this.coroutineContext)
     private var timeFlag = System.currentTimeMillis()
-
     override fun onEnable() {
         // 创建图片存储区
         val imageFolder = dataFolder.resolve("img")
@@ -77,6 +76,7 @@ object PicPlug : KotlinPlugin(
                                         logger.error("未能正确下载图片，尝试次数${Config.retryCount}，Time: $timeCost ms")
                                         group.sendMessage(mcb.append("图片获取失败 >_<").asMessageChain())
                                     }
+
                                     else -> {
                                         logger.info("获取到图片 $fileName，Time: $timeCost ms")
                                         val img = imageFolder.resolve(fileName).uploadAsImage(group, "jpg")
@@ -103,12 +103,21 @@ object PicPlug : KotlinPlugin(
                     R.CHECK -> {
                         val imageAPIsInfo =
                             Config.imageAPIs.fold("imageAPIs: \n") { info, api -> "$info\t$api\n" }
-                        val whiteGroupListInfo =
-                            Config.whiteGroupList.fold("whiteGroupList: \n") { info, g -> "$info\t$g\n" }
-                        val whiteQQList =
-                            Config.whiteQQList.fold("whiteQQList: \n") { info, q -> "$info\t$q\n" }
+                        val whiteGroupListInfo = bot.groups
+                            .filter { it.id in Config.whiteGroupList }
+                            .fold("whiteGroupList: \n") { info, g ->
+                                "$info\t${g.id} ${g.name}\n"
+                            }
+                        val whiteQQList = bot.groups
+                            .flatMap { it.members }
+                            .filter { it.id in Config.whiteQQList }
+                            .distinctBy { it.id }
+                            .fold("whiteQQList: \n") { info, q ->
+                                "$info\t${q.id} ${q.nick}\n"
+                            }
                         sender.sendMessage(imageAPIsInfo + whiteGroupListInfo + whiteQQList)
                     }
+
                     else -> {
                         val cmds = message.content.split(" ")
                         if (cmds.isNotEmpty()) {
@@ -122,8 +131,10 @@ object PicPlug : KotlinPlugin(
                                     } catch (e: Exception) {
                                         sender.sendMessage("错误：${e.message}")
                                     }
+
                                     else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                 }
+
                                 R.REMOVE_GROUP -> when (cmds.size) {
                                     1 -> sender.sendMessage("指令缺少参数")
                                     2 -> try {
@@ -135,8 +146,10 @@ object PicPlug : KotlinPlugin(
                                     } catch (e: Exception) {
                                         sender.sendMessage("错误：${e.message}")
                                     }
+
                                     else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                 }
+
                                 R.ADD_MEMBER -> when (cmds.size) {
                                     1 -> sender.sendMessage("指令缺少参数")
                                     2 -> try {
@@ -146,8 +159,10 @@ object PicPlug : KotlinPlugin(
                                     } catch (e: Exception) {
                                         sender.sendMessage("错误：${e.message}")
                                     }
+
                                     else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                 }
+
                                 R.REMOVE_MEMBER -> when (cmds.size) {
                                     1 -> sender.sendMessage("指令缺少参数")
                                     2 -> try {
@@ -163,8 +178,10 @@ object PicPlug : KotlinPlugin(
                                     } catch (e: Exception) {
                                         sender.sendMessage("错误：${e.message}")
                                     }
+
                                     else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                 }
+
                                 R.ADD_API -> when (cmds.size) {
                                     1 -> sender.sendMessage("指令缺少参数")
                                     2 -> try {
@@ -174,8 +191,10 @@ object PicPlug : KotlinPlugin(
                                     } catch (e: Exception) {
                                         sender.sendMessage("错误：${e.message}")
                                     }
+
                                     else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                 }
+
                                 R.REMOVE_API -> when (cmds.size) {
                                     1 -> sender.sendMessage("指令缺少参数")
                                     2 -> try {
@@ -191,6 +210,7 @@ object PicPlug : KotlinPlugin(
                                     } catch (e: Exception) {
                                         sender.sendMessage("错误：${e.message}")
                                     }
+
                                     else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                 }
                             }
