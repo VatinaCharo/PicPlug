@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "1.5.0"
+    val kotlinVersion = "1.7.10"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "nju.eur3ka"
-version = "0.1.0"
+version = "2.0.0"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
