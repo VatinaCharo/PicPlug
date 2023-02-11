@@ -26,9 +26,9 @@ object R {
             ---
             g- <group id>   : 从群白名单中移除一个群
             ---
-            m+ <member id>  : 向群员白名单中添加一个群员
+            m+ <member id>  : 向群员白名单中添加群员
             ---
-            m- <member id>  : 从群员白名单中移除一个群员
+            m- <member id>  : 从群员白名单中移除群员
             ---
             l+ <api link>   : 向API库中添加一个图片API链接
             ---

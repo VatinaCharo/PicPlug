@@ -19,7 +19,7 @@ object PicPlug : KotlinPlugin(
     JvmPluginDescription(
         id = "nju.eur3ka.picplug",
         name = "PicPlug",
-        version = "1.2.1",
+        version = "2.0.0",
     ) {
         author("Eur3ka")
         info("""发图小助手""")
@@ -40,18 +40,13 @@ object PicPlug : KotlinPlugin(
         }
         // 载入配置文件
         reloadPluginConfig(Config)
-        // 若管理员不是白名单成员，则自动添加为白名单成员
-        if (!Config.whiteQQList.contains(Config.adminQQ)) {
-            Config.whiteQQList.add(Config.adminQQ)
-        }
         // 实现获取图片指令
         globalEventChannel().subscribeAlways<GroupMessageEvent> {
-            // 只有白名单中的群里的白名单成员可以触发指令
-            // 管理员默认是白名单成员
-            if (group.id in Config.whiteGroupList && sender.id in Config.whiteQQList) {
+            // 只有白名单群里的非黑名单成员可以触发指令
+            if (group.id in Config.whiteGroupList && sender.id !in Config.banQQList) {
                 // 检测是否为触发指令
-                Config.commands.forEach {
-                    if (message.content.startsWith(it)) {
+                Config.commands.forEachIndexed { index, cmd ->
+                    if (message.content.startsWith(cmd)) {
                         val mcb = MessageChainBuilder()
                             .append(QuoteReply(source))
                             .append(At(sender))
@@ -63,9 +58,16 @@ object PicPlug : KotlinPlugin(
                             // 启动一个下载图片，转发图片的协程
                             scope.launch {
                                 var timeCost = System.currentTimeMillis()
+                                // 指令列表的第一个指令默认为随即调用API
+                                // 指令列表的非第一个指令依照顺序依次调用对应的API
+                                val url = if (index == 0) {
+                                    URL(Config.imageAPIs.shuffled().first())
+                                } else {
+                                    URL(Config.imageAPIs[(index - 1) % Config.imageAPIs.size])
+                                }
                                 // 获取图片
                                 val fileName = downloadImg(
-                                    URL(Config.imageAPIs.shuffled().first()),
+                                    url,
                                     imageFolder.absolutePath,
                                     Config.retryCount
                                 )
@@ -97,121 +99,124 @@ object PicPlug : KotlinPlugin(
         }
         // 实现管理员私戳的管理功能
         globalEventChannel().subscribeAlways<FriendMessageEvent> {
-            scope.launch {
-                when (message.content) {
-                    R.HELP -> sender.sendMessage(R.HELP_INFO)
-                    R.CHECK -> {
-                        val imageAPIsInfo =
-                            Config.imageAPIs.fold("imageAPIs: \n") { info, api -> "$info\t$api\n" }
-                        val whiteGroupListInfo = bot.groups
-                            .filter { it.id in Config.whiteGroupList }
-                            .fold("whiteGroupList: \n") { info, g ->
-                                "$info\t${g.id} ${g.name}\n"
-                            }
-                        val whiteQQList = bot.groups
-                            .flatMap { it.members }
-                            .filter { it.id in Config.whiteQQList }
-                            .distinctBy { it.id }
-                            .fold("whiteQQList: \n") { info, q ->
-                                "$info\t${q.id} ${q.nick}\n"
-                            }
-                        sender.sendMessage(imageAPIsInfo + whiteGroupListInfo + whiteQQList)
-                    }
-
-                    else -> {
-                        val cmds = message.content.split(" ")
-                        if (cmds.isNotEmpty()) {
-                            when (cmds[0]) {
-                                R.ADD_GROUP -> when (cmds.size) {
-                                    1 -> sender.sendMessage("指令缺少参数")
-                                    2 -> try {
-                                        val groupId = cmds[1].toLong()
-                                        Config.whiteGroupList.add(groupId)
-                                        sender.sendMessage("成功向群白名单中添加了群$groupId")
-                                    } catch (e: Exception) {
-                                        sender.sendMessage("错误：${e.message}")
-                                    }
-
-                                    else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
+            // 只有机器人管理员可以配置机器人
+            if (sender.id == Config.adminQQ) {
+                scope.launch {
+                    when (message.content) {
+                        // 显示帮助信息
+                        R.HELP -> sender.sendMessage(R.HELP_INFO)
+                        // 显示当前配置信息
+                        R.CHECK -> {
+                            val imageAPIsInfo =
+                                Config.imageAPIs.fold("imageAPIs: \n") { info, api -> "$info\t$api\n" }
+                            val whiteGroupListInfo = bot.groups
+                                .filter { it.id in Config.whiteGroupList }
+                                .fold("whiteGroupList: \n") { info, g ->
+                                    "$info\t${g.id} ${g.name}\n"
                                 }
-
-                                R.REMOVE_GROUP -> when (cmds.size) {
-                                    1 -> sender.sendMessage("指令缺少参数")
-                                    2 -> try {
-                                        val groupId = cmds[1].toLong()
-                                        when (Config.whiteGroupList.remove(groupId)) {
-                                            true -> sender.sendMessage("成功从群白名单中移除了群$groupId")
-                                            false -> sender.sendMessage("错误：群白名单中不存在群$groupId")
+                            val banQQList = bot.groups
+                                .flatMap { it.members }
+                                .filter { it.id in Config.banQQList }
+                                .distinctBy { it.id }
+                                .fold("banQQList: \n") { info, q ->
+                                    "$info\t${q.id} ${q.nick}\n"
+                                }
+                            sender.sendMessage(imageAPIsInfo + whiteGroupListInfo + banQQList)
+                        }
+                        // 机器人管理指令
+                        else -> {
+                            val cmds = message.content.split(" ")
+                            if (cmds.isNotEmpty()) {
+                                when (cmds[0]) {
+                                    // 添加白名单群
+                                    R.ADD_GROUP -> when (cmds.size) {
+                                        1 -> sender.sendMessage("指令缺少参数")
+                                        2 -> try {
+                                            val groupId = cmds[1].toLong()
+                                            Config.whiteGroupList.add(groupId)
+                                            sender.sendMessage("成功向群白名单中添加了群$groupId")
+                                        } catch (e: Exception) {
+                                            sender.sendMessage("错误：${e.message}")
                                         }
-                                    } catch (e: Exception) {
-                                        sender.sendMessage("错误：${e.message}")
+
+                                        else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                     }
-
-                                    else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
-                                }
-
-                                R.ADD_MEMBER -> when (cmds.size) {
-                                    1 -> sender.sendMessage("指令缺少参数")
-                                    2 -> try {
-                                        val qq = cmds[1].toLong()
-                                        Config.whiteQQList.add(qq)
-                                        sender.sendMessage("成功向群员白名单中添加了群员$qq")
-                                    } catch (e: Exception) {
-                                        sender.sendMessage("错误：${e.message}")
-                                    }
-
-                                    else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
-                                }
-
-                                R.REMOVE_MEMBER -> when (cmds.size) {
-                                    1 -> sender.sendMessage("指令缺少参数")
-                                    2 -> try {
-                                        val qq = cmds[1].toLong()
-                                        if (qq == Config.adminQQ) {
-                                            sender.sendMessage("错误：不能从群员白名单中移除机器人管理员")
-                                        } else {
-                                            when (Config.whiteQQList.remove(qq)) {
-                                                true -> sender.sendMessage("成功从群员白名单中移除了群员$qq")
-                                                false -> sender.sendMessage("错误：群员白名单中不存在群员$qq")
+                                    // 移除白名单群
+                                    R.REMOVE_GROUP -> when (cmds.size) {
+                                        1 -> sender.sendMessage("指令缺少参数")
+                                        2 -> try {
+                                            val groupId = cmds[1].toLong()
+                                            when (Config.whiteGroupList.remove(groupId)) {
+                                                true -> sender.sendMessage("成功从群白名单中移除了群$groupId")
+                                                false -> sender.sendMessage("错误：群白名单中不存在群$groupId")
                                             }
+                                        } catch (e: Exception) {
+                                            sender.sendMessage("错误：${e.message}")
                                         }
-                                    } catch (e: Exception) {
-                                        sender.sendMessage("错误：${e.message}")
+
+                                        else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                     }
+                                    // 添加黑名单群员
+                                    R.ADD_MEMBER -> when (cmds.size) {
+                                        1 -> sender.sendMessage("指令缺少参数")
+                                        2 -> try {
+                                            val qq = cmds[1].toLong()
+                                            Config.banQQList.add(qq)
+                                            sender.sendMessage("成功向群员黑名单中添加了群员$qq")
+                                        } catch (e: Exception) {
+                                            sender.sendMessage("错误：${e.message}")
+                                        }
 
-                                    else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
-                                }
-
-                                R.ADD_API -> when (cmds.size) {
-                                    1 -> sender.sendMessage("指令缺少参数")
-                                    2 -> try {
-                                        val api = cmds[1]
-                                        Config.imageAPIs.add(api)
-                                        sender.sendMessage("成功向图片API库中添加了API:$api")
-                                    } catch (e: Exception) {
-                                        sender.sendMessage("错误：${e.message}")
+                                        else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
                                     }
+                                    // 移除黑名单群员
+                                    R.REMOVE_MEMBER -> when (cmds.size) {
+                                        1 -> sender.sendMessage("指令缺少参数")
+                                        2 -> try {
+                                            val qq = cmds[1].toLong()
+                                            if (Config.banQQList.remove(qq)) {
+                                                sender.sendMessage("成功从群员白名单中移除了群员$qq")
+                                            } else {
+                                                sender.sendMessage("错误：群员白名单中不存在群员$qq")
+                                            }
+                                        } catch (e: Exception) {
+                                            sender.sendMessage("错误：${e.message}")
+                                        }
 
-                                    else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
-                                }
-
-                                R.REMOVE_API -> when (cmds.size) {
-                                    1 -> sender.sendMessage("指令缺少参数")
-                                    2 -> try {
-                                        if (Config.imageAPIs.size == 1) {
-                                            sender.sendMessage("错误：不能移除最后的图片API链接")
-                                        } else {
+                                        else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
+                                    }
+                                    // 添加API
+                                    R.ADD_API -> when (cmds.size) {
+                                        1 -> sender.sendMessage("指令缺少参数")
+                                        2 -> try {
                                             val api = cmds[1]
-                                            when (Config.imageAPIs.remove(api)) {
-                                                true -> sender.sendMessage("成功从图片API库中移除了API:$api")
-                                                false -> sender.sendMessage("错误：图片API库中不存在API:$api")
-                                            }
+                                            Config.imageAPIs.add(api)
+                                            sender.sendMessage("成功向图片API库中添加了API:$api")
+                                        } catch (e: Exception) {
+                                            sender.sendMessage("错误：${e.message}")
                                         }
-                                    } catch (e: Exception) {
-                                        sender.sendMessage("错误：${e.message}")
-                                    }
 
-                                    else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
+                                        else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
+                                    }
+                                    // 移除API
+                                    R.REMOVE_API -> when (cmds.size) {
+                                        1 -> sender.sendMessage("指令缺少参数")
+                                        2 -> try {
+                                            if (Config.imageAPIs.size == 1) {
+                                                sender.sendMessage("错误：不能移除最后的图片API链接")
+                                            } else {
+                                                val api = cmds[1]
+                                                when (Config.imageAPIs.remove(api)) {
+                                                    true -> sender.sendMessage("成功从图片API库中移除了API:$api")
+                                                    false -> sender.sendMessage("错误：图片API库中不存在API:$api")
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            sender.sendMessage("错误：${e.message}")
+                                        }
+
+                                        else -> sender.sendMessage("指令存在多余的部分：${cmds.drop(2)}")
+                                    }
                                 }
                             }
                         }
