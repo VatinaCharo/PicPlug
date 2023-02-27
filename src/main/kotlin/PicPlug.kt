@@ -13,6 +13,7 @@ import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.data.QuoteReply
 import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
+import net.mamoe.mirai.utils.error
 import java.net.URL
 
 object PicPlug : KotlinPlugin(
@@ -66,11 +67,9 @@ object PicPlug : KotlinPlugin(
                                     URL(Config.imageAPIs[(index - 1) % Config.imageAPIs.size])
                                 }
                                 // 获取图片
-                                val fileName = downloadImg(
-                                    url,
-                                    imageFolder.absolutePath,
-                                    Config.retryCount
-                                )
+                                val result = downloadImg(url, imageFolder.absolutePath, Config.retryCount)
+                                val type = result.first
+                                val fileName = result.second
                                 timeCost = System.currentTimeMillis() - timeCost
                                 // 检查是否正确获取了图片，并发送对应的消息
                                 when (fileName) {
@@ -81,8 +80,12 @@ object PicPlug : KotlinPlugin(
 
                                     else -> {
                                         logger.info("获取到图片 $fileName，Time: $timeCost ms")
-                                        val img = imageFolder.resolve(fileName).uploadAsImage(group, "jpg")
-                                        group.sendMessage(mcb.append(img).asMessageChain())
+                                        if (type == PicType.UNKNOWN) {
+                                            logger.error { "暂未支持的图片类型" }
+                                        } else {
+                                            val img = imageFolder.resolve(fileName).uploadAsImage(group, type.ext)
+                                            group.sendMessage(mcb.append(img).asMessageChain())
+                                        }
                                     }
                                 }
                             }
