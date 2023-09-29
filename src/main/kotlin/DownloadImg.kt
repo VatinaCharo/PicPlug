@@ -24,13 +24,15 @@ fun downloadImg(url: URL, imagePath: String, tryCount: Int): Pair<PicType, Strin
         val byteBuffer = ByteBuffer.allocate(4)
         FileChannel.open(path, StandardOpenOption.READ).use { it.read(byteBuffer) }
         val header = byteBuffer.array().toHexString().uppercase()
-//        PicPlug.logger.error { "header: $header" }
         val type = when {
             header.startsWith(PicType.JPEG.header) -> PicType.JPEG
             header.startsWith(PicType.PNG.header) -> PicType.PNG
             header.startsWith(PicType.GIF.header) -> PicType.GIF
             header.startsWith(PicType.BMP.header) -> PicType.BMP
-            else -> PicType.UNKNOWN
+            else -> {
+                PicPlug.logger.error("Unknown Image: HEAD=$header")
+                PicType.UNKNOWN
+            }
         }
         fileName = fileName.plus(".").plus(type.ext)
         // 重命名图片文件
