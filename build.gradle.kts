@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "nju.eur3ka"
-version = "2.1.0"
+version = "2.1.1"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
